@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "752814166259",
+    "project_id": "iota-shopping",
+    "storage_bucket": "iota-shopping.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752814166259:android:607b07c860cd98967d2786",
+        "android_client_info": {
+          "package_name": "com.example.iotashopping"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "752814166259-qpek1iq6l0frktp51alcrltomlm5eljl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVvW4oyKmdcWwW3SJFVpHgAjbwpql_viM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "752814166259-qpek1iq6l0frktp51alcrltomlm5eljl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

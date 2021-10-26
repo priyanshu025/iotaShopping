@@ -3,6 +3,8 @@ package FireStore;
 import android.app.Activity;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,8 +15,11 @@ import com.google.firebase.firestore.SetOptions;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+
 import activities.LoginActivity;
 import activities.RegistrationActivity;
+import activities.UserProfileActivity;
 import model.User;
 
 public class FireStoreClass {
@@ -54,7 +59,7 @@ public class FireStoreClass {
             public void onSuccess(Object var1) {
                 this.onSuccess((DocumentSnapshot)var1);
             }
-            public final void onSuccess(DocumentSnapshot document) {
+            public final void onSuccess(@NonNull DocumentSnapshot document) {
                 Log.i(activity.getClass().getSimpleName(), document.toString());
                 Object var10000 = document.toObject(User.class);
                 User user = (User)var10000;
@@ -75,5 +80,27 @@ public class FireStoreClass {
             }
         }));
     }
+    public void updateUserProfileData(Activity activity, HashMap userHashMap) {
+        // Collection Name
+        mFireStore.collection("users")
+                // Document ID against which the data to be updated. Here the document id is the current logged in user id.
+                .document(getCurrentUserID())
+                // A HashMap of fields which are to be updated.
+                .update(userHashMap).addOnSuccessListener(new OnSuccessListener() {
+            @Override
+            public void onSuccess(Object o) {
+                if (activity instanceof UserProfileActivity) {
+                    ((UserProfileActivity) activity).userProfileUpdateSuccess();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (activity instanceof UserProfileActivity) {
+                    ((UserProfileActivity) activity).hideProgressDialog();
+                }
+            }
+        });
 
+    }
 }

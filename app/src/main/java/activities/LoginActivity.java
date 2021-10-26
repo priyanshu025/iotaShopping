@@ -80,13 +80,20 @@ public class LoginActivity extends BaseActivity {
 
     public void userLoggedInSuccess(User user) {
         hideProgressDialog();
-
         // Print the user details in the log as of now.
         Log.i("First Name: ", user.getFirstName());
         Log.i("Email: ", user.getEmail());
-
+        if (user.getProfileCompleted() == 0) {
+            // If the user profile is incomplete then launch the UserProfileActivity.
+            Intent intent =new  Intent(LoginActivity.this, UserProfileActivity.class);
+            intent.putExtra("user details",user);
+            startActivity(intent);
+        } else {
+            // Redirect the user to Main Screen after log in.
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        }
         // Redirect the user to Main Screen after log in.
-        startActivity(new Intent(this, MainActivity.class));
+
         finish();
     }
 }

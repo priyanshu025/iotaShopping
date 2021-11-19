@@ -1,7 +1,4 @@
-package activities;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+package ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.iotashopping.MainActivity;
+import androidx.annotation.NonNull;
+
 import com.example.iotashopping.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -83,6 +81,9 @@ public class LoginActivity extends BaseActivity {
         // Print the user details in the log as of now.
         Log.i("First Name: ", user.getFirstName());
         Log.i("Email: ", user.getEmail());
+        long mobile=user.getMobile();
+        Log.i("mobile", String.valueOf(mobile));
+
         if (user.getProfileCompleted() == 0) {
             // If the user profile is incomplete then launch the UserProfileActivity.
             Intent intent =new  Intent(LoginActivity.this, UserProfileActivity.class);
@@ -90,7 +91,7 @@ public class LoginActivity extends BaseActivity {
             startActivity(intent);
         } else {
             // Redirect the user to Main Screen after log in.
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            startActivity(new Intent(LoginActivity.this, DashBoardActivity.class));
         }
         // Redirect the user to Main Screen after log in.
 

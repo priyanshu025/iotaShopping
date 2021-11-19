@@ -1,7 +1,10 @@
 package FireStore;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.net.Uri;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 
@@ -12,18 +15,54 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
-import activities.LoginActivity;
-import activities.RegistrationActivity;
-import activities.UserProfileActivity;
+import ui.activities.LoginActivity;
+import ui.activities.RegistrationActivity;
+import ui.activities.UserProfileActivity;
 import model.User;
 
 public class FireStoreClass {
     private FirebaseFirestore mFireStore=FirebaseFirestore.getInstance();
+    private FirebaseStorage storage= FirebaseStorage.getInstance();
+    public String getFileExtension(Uri uri,Activity activity){
+        ContentResolver contentResolver=activity.getContentResolver();
+        MimeTypeMap mimeTypeMap=MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+    }
+    public void uploadImage(Uri uri,Activity activity){
+        StorageReference storageReference=storage.getReference().child(
+                "uploads" + System.currentTimeMillis() + "." + getFileExtension(uri,activity)
+        );
+        storageReference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                      taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                          @Override
+                          public void onSuccess(Uri uri) {
+                              String url=uri.toString();
+                              Log.i("url",url);
+                              ((UserProfileActivity)activity).uploadImageSuccess(url);
+                          }
+                      }).addOnFailureListener(new OnFailureListener() {
+                          @Override
+                          public void onFailure(@NonNull Exception e) {
+                              if(activity instanceof UserProfileActivity){
+                                  ((UserProfileActivity) activity).hideProgressDialog();
+                              }
+                              Log.e(activity.getClass().getSimpleName(),e.getMessage(),e);
+                              e.printStackTrace();
+                          }
+                      });
+            }
+        });
+    }
     public final void registerUser(@NotNull final RegistrationActivity activity, @NotNull User userInfo) {
 
         this.mFireStore.collection("users").document(userInfo.getId()).set(userInfo, SetOptions.merge()).addOnSuccessListener((OnSuccessListener)(new OnSuccessListener() {

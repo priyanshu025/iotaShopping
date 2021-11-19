@@ -1,10 +1,4 @@
-package activities;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+package ui.activities;
 
 import android.Manifest;
 import android.content.Context;
@@ -12,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,9 +15,12 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import com.example.iotashopping.MainActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.example.iotashopping.R;
-import com.google.protobuf.Any;
 
 import java.util.HashMap;
 
@@ -43,6 +39,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     RadioButton rb_male;
     User user_details;
     Uri image;
+    String imageURL;
     public static final int READ_STORAGE_PERMISSION_CODE = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,44 +70,36 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        if(v!=null){
-            if(v.getId()==R.id.iv_user_photo){
-                if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
+        if (v != null) {
+            if (v.getId() == R.id.iv_user_photo) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     //showErrorSnackBar("You already have the storage permission.", false);
 
                     imageChooser.setImage_picker(this);
-                }else{
-                    ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},READ_STORAGE_PERMISSION_CODE);
+
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_STORAGE_PERMISSION_CODE);
                 }
             }
-            if(v.getId()==R.id.btn_submit){
-                if(validateUserDetails()){
-                    HashMap userHashMap=new HashMap();
-                    String m_number=mobile.getText().toString();
-                    String Gender=rb_male.isChecked()?"MALE":"FEMALE";
+            if (v.getId() == R.id.btn_submit) {
 
-                    if(!m_number.isEmpty()){
-                        userHashMap.put("mobile", Long.parseLong(m_number));
-                    }
-                    userHashMap.put("gender",Gender);
-                    if(image!=null){
-                        String user_image=image.toString();
-                        userHashMap.put("image",user_image);
-                    }
-
+                if (validateUserDetails()) {
                     showProgressDialog("please wait");
-                    FireStoreClass fireStoreClass=new FireStoreClass();
-                    fireStoreClass.updateUserProfileData(this,userHashMap);
-                    showErrorSnackBar("your details are valid, you can update them :) ",false);
+                    if (image != null) {
+                        FireStoreClass fireStoreClass = new FireStoreClass();
+                        fireStoreClass.uploadImage(image, UserProfileActivity.this);
+                    }else{
+                        updateUserProfileDetails();
+                    }
                 }
-            }
 
+            }
         }
     }
-    public final void userProfileUpdateSuccess() {
+        public final void userProfileUpdateSuccess( ) {
         this.hideProgressDialog();
         Toast.makeText((Context)this, "user details updated", Toast.LENGTH_SHORT).show();
-        this.startActivity(new Intent((Context)this, MainActivity.class));
+        this.startActivity(new Intent((Context)this, DashBoardActivity.class));
         this.finish();
     }
 
@@ -140,6 +129,8 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
                      image=data.getData();
                     //imageView.setImageURI(image);
                     glideLoader.load_user_picture(imageView,image);
+                    /*FireStoreClass fireStoreClass=new FireStoreClass();
+                    fireStoreClass.uploadImage(image,UserProfileActivity.this);*/
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -153,6 +144,36 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
             return false;
         }
         return true;
+
+    }
+    public void updateUserProfileDetails(){
+            FireStoreClass fireStoreClass=new FireStoreClass();
+            HashMap userHashMap=new HashMap();
+            String m_number=mobile.getText().toString();
+            String Gender=rb_male.isChecked()?"MALE":"FEMALE";
+
+            if(!m_number.isEmpty()){
+                userHashMap.put("mobile", Long.parseLong(m_number));
+            }
+            userHashMap.put("gender",Gender);
+            if(image!=null){
+                String user_image=image.toString();
+                userHashMap.put("image",user_image);
+            }
+
+            //showProgressDialog("please wait");
+        String profile="1";
+        userHashMap.put("profileCompleted", Integer.parseInt(profile));
+        fireStoreClass.updateUserProfileData(this,userHashMap);
+            showErrorSnackBar("your details are valid, you can update them :) ",false);
+
+    }
+
+    public void uploadImageSuccess(String url){
+        //hideProgressDialog();
+        imageURL=url;
+        //Toast.makeText(UserProfileActivity.this, url, Toast.LENGTH_SHORT).show();
+        updateUserProfileDetails();
 
     }
 }

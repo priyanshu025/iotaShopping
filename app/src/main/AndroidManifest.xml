@@ -1,32 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.iotashopping">
+    package="com.example.iotashopping" >
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.IotaShopping">
+        android:theme="@style/Theme.IotaShopping" >
         <activity
-            android:name="activities.UserProfileActivity"
+            android:name="ui.activities.DashBoardActivity"
+            android:exported="true"
+            android:label="@string/title_activity_dash_board" />
+        <activity
+            android:name="ui.activities.ui.DashBoardActivity"
+            android:exported="true"
+            android:label="@string/title_activity_dash_board" />
+        <activity
+            android:name="ui.activities.UserProfileActivity"
             android:exported="true" />
         <activity
-            android:name="activities.LoginActivity"
+            android:name="ui.activities.LoginActivity"
             android:exported="true" />
         <activity
-            android:name="activities.RegistrationActivity"
+            android:name="ui.activities.RegistrationActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true" />
         <activity
-            android:name="activities.splashScreenActivity"
+            android:name="ui.activities.splashScreenActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.NoActionBar.IotaShopping">
+            android:theme="@style/Theme.AppCompat.NoActionBar.IotaShopping" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

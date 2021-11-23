@@ -7,16 +7,19 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -36,7 +39,11 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     GlideLoader glideLoader=new GlideLoader(this);
     Button button_submit;
     EditText mobile;
-    RadioButton rb_male;
+    TextView tv_title;
+    EditText et_firstname;
+    EditText et_lastname;
+    RadioButton rb_male_btn;
+    RadioButton rb_female_btn;
     User user_details;
     Uri image;
     String imageURL;
@@ -45,24 +52,52 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
-        EditText et_firstname=findViewById(R.id.et_first_name);
-        EditText et_lastname=findViewById(R.id.et_last_name);
+        et_firstname=findViewById(R.id.et_first_name);
+        et_lastname=findViewById(R.id.et_last_name);
         EditText et_email=findViewById(R.id.et_email);
-        getSupportActionBar().hide();
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Intent intent=getIntent();
-        user_details=new User();
-        if(intent.hasExtra("user details")) {
-           user_details= intent.getParcelableExtra("user details");
-        }
-        et_firstname.setEnabled(false);
-        et_firstname.setText(user_details.getFirstName());
-        et_email.setEnabled(false);
-        et_email.setText(user_details.getEmail());
         imageView=findViewById(R.id.iv_user_photo);
         button_submit=findViewById(R.id.btn_submit);
         mobile=findViewById(R.id.et_mobile_number);
-        rb_male=findViewById(R.id.rb_male);
+        rb_male_btn=findViewById(R.id.rb_male);
+        rb_female_btn=findViewById(R.id.rb_female);
+        tv_title=findViewById(R.id.tv_title);
+        //getSupportActionBar().hide();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Intent intent=getIntent();
+        //user_details=new User();
+        if(intent.hasExtra("user details")) {
+           user_details= intent.getParcelableExtra("user details");
+        }
+        if(user_details.getProfileCompleted()==0){
+            tv_title.setText("Profile Complete");
+            et_firstname.setEnabled(false);
+            et_firstname.setText(user_details.getFirstName());
+            et_email.setEnabled(false);
+            et_email.setText(user_details.getEmail());
+        }else{
+            tv_title.setText("Edit Profile");
+            setupActionbar();
+             glideLoader.load_user_picture(imageView,Uri.parse(user_details.getImage()));
+             et_firstname.setText(user_details.getFirstName());
+           // et_lastname.setText(mUserDetails.lastName)
+            et_email.setEnabled(false);
+            et_email.setText(user_details.getEmail());
+
+            if (user_details.getMobile() != 0L) {
+                mobile.setText(String.valueOf(user_details.getMobile()));
+            }
+            Log.i("gender",user_details.getGender());
+            if(TextUtils.equals(user_details.getGender(),"FEMALE") ) {
+                rb_female_btn.setChecked(true);
+                //rb_male.setChecked(false);
+            }
+
+            if(TextUtils.equals(user_details.getGender(),"MALE") ) {
+                rb_male_btn.setChecked(true);
+            }
+        }
+
+
         imageView.setOnClickListener((this::onClick));
          button_submit.setOnClickListener(this::onClick);
 
@@ -87,7 +122,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
                     showProgressDialog("please wait");
                     if (image != null) {
                         FireStoreClass fireStoreClass = new FireStoreClass();
-                        fireStoreClass.uploadImage(image, UserProfileActivity.this);
+                        fireStoreClass.uploadImage(image, UserProfileActivity.this,"user_profile");
                     }else{
                         updateUserProfileDetails();
                     }
@@ -149,13 +184,19 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     public void updateUserProfileDetails(){
             FireStoreClass fireStoreClass=new FireStoreClass();
             HashMap userHashMap=new HashMap();
+            String first_name= et_firstname.getText().toString();
+            if(first_name!=user_details.getFirstName()){
+                userHashMap.put("firstName",first_name);
+            }
             String m_number=mobile.getText().toString();
-            String Gender=rb_male.isChecked()?"MALE":"FEMALE";
+            String Gender=rb_male_btn.isChecked()?"MALE":"FEMALE";
 
-            if(!m_number.isEmpty()){
+            if(!m_number.isEmpty() && m_number!=String.valueOf(user_details.getMobile())){
                 userHashMap.put("mobile", Long.parseLong(m_number));
             }
-            userHashMap.put("gender",Gender);
+            if(!Gender.isEmpty() && Gender!=user_details.getGender()) {
+                userHashMap.put("gender", Gender);
+            }
             if(image!=null){
                 String user_image=image.toString();
                 userHashMap.put("image",user_image);
@@ -165,7 +206,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
         String profile="1";
         userHashMap.put("profileCompleted", Integer.parseInt(profile));
         fireStoreClass.updateUserProfileData(this,userHashMap);
-            showErrorSnackBar("your details are valid, you can update them :) ",false);
+        showErrorSnackBar("your details are valid, you can update them :) ",false);
 
     }
 
@@ -174,6 +215,22 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
         imageURL=url;
         //Toast.makeText(UserProfileActivity.this, url, Toast.LENGTH_SHORT).show();
         updateUserProfileDetails();
+
+    }
+    private void setupActionbar() {
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar_user_profile_activity);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = this.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_vector_chevron_left_24);
+        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
     }
 }

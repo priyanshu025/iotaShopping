@@ -1,4 +1,4 @@
-package ui.activities.ui.notifications;
+package ui.activities.Orders;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,33 +7,32 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.example.iotashopping.databinding.FragmentNotificationsBinding;
 
-public class NotificationsFragment extends Fragment {
+import com.example.iotashopping.databinding.FragmentOrdersBinding;
 
-    private NotificationsViewModel notificationsViewModel;
-private FragmentNotificationsBinding binding;
+public class OrdersFragment extends Fragment {
+
+   // private NotificationsViewModel notificationsViewModel;
+private FragmentOrdersBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
-        notificationsViewModel =
+       /* notificationsViewModel =
                 new ViewModelProvider(this).get(NotificationsViewModel.class);
-
-    binding = FragmentNotificationsBinding.inflate(inflater, container, false);
+*/
+    binding = FragmentOrdersBinding.inflate(inflater, container, false);
     View root = binding.getRoot();
 
         final TextView textView = binding.textNotifications;
-        notificationsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+       /* notificationsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
             }
-        });
+        });*/
+        textView.setText("This is Orders Fragment");
         return root;
     }
 

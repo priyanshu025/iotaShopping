@@ -3,8 +3,6 @@ package model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.jetbrains.annotations.NotNull;
-
 public class User implements Parcelable {
 
     private String id;
@@ -14,6 +12,10 @@ public class User implements Parcelable {
     private long mobile;
     private String gender;
     private int profileCompleted;
+    private String productTitle;
+    private String productDescription;
+    private int productQuantity;
+    private int ProductPrice;
 
     public User( String id,  String firstName,  String email,  String image, long mobile,  String gender, int profileCompleted) {
         this.id = id;

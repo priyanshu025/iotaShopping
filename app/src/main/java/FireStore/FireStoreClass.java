@@ -23,8 +23,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
+import ui.activities.AddProductsActivity;
 import ui.activities.LoginActivity;
 import ui.activities.RegistrationActivity;
+import ui.activities.SettingsActivity;
 import ui.activities.UserProfileActivity;
 import model.User;
 
@@ -36,9 +38,9 @@ public class FireStoreClass {
         MimeTypeMap mimeTypeMap=MimeTypeMap.getSingleton();
         return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
     }
-    public void uploadImage(Uri uri,Activity activity){
+    public void uploadImage(Uri uri,Activity activity,String image_type){
         StorageReference storageReference=storage.getReference().child(
-                "uploads" + System.currentTimeMillis() + "." + getFileExtension(uri,activity)
+                image_type + System.currentTimeMillis() + "." + getFileExtension(uri,activity)
         );
         storageReference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -48,13 +50,21 @@ public class FireStoreClass {
                           public void onSuccess(Uri uri) {
                               String url=uri.toString();
                               Log.i("url",url);
-                              ((UserProfileActivity)activity).uploadImageSuccess(url);
+                              if(activity  instanceof UserProfileActivity){
+                                  ((UserProfileActivity) activity).uploadImageSuccess(url);
+                              }
+                              if (activity instanceof AddProductsActivity){
+                                  ((AddProductsActivity) activity).uploadImageSuccess(url);
+                              }
                           }
                       }).addOnFailureListener(new OnFailureListener() {
                           @Override
                           public void onFailure(@NonNull Exception e) {
                               if(activity instanceof UserProfileActivity){
                                   ((UserProfileActivity) activity).hideProgressDialog();
+                              }
+                              if(activity instanceof AddProductsActivity){
+                                  ((AddProductsActivity) activity).hideProgressDialog();
                               }
                               Log.e(activity.getClass().getSimpleName(),e.getMessage(),e);
                               e.printStackTrace();
@@ -106,6 +116,9 @@ public class FireStoreClass {
                 if (var3 instanceof LoginActivity) {
                     ((LoginActivity)activity).userLoggedInSuccess(user);
                 }
+                if(var3 instanceof SettingsActivity){
+                    ((SettingsActivity)activity).UserDetailSuccess(user);
+                }
             }
         })).addOnFailureListener((OnFailureListener)(new OnFailureListener() {
             public final void onFailure(@NotNull Exception e) {
@@ -113,6 +126,9 @@ public class FireStoreClass {
                 Activity var2 = activity;
                 if (var2 instanceof LoginActivity) {
                     ((LoginActivity)activity).hideProgressDialog();
+                }
+                if(var2 instanceof SettingsActivity){
+                    ((SettingsActivity) activity).hideProgressDialog();
                 }
 
                 Log.e(activity.getClass().getSimpleName(), "Error while getting user details.", (Throwable)e);

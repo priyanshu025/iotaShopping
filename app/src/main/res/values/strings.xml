@@ -53,6 +53,19 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="orders">orders</string>
+    <string name="products">products</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="settings">Settings</string>
     <!--END-->
+    <string name="title_settings">Setting</string>
+    <string name="lbl_edit">Edit</string>
+    <string name="lbl_addresses">Addresses</string>
+    <string name="btn_lbl_logout">Logout</string>
+    <string name="err_select_product_image">Please Select Product Image</string>
+    <string name="err_enter_product_title">Please Enter Product Title</string>
+    <string name="err_enter_product_price">Please Enter Product Price</string>
+    <string name="err_enter_product_description">Please Enter Product Description</string>
+    <string name="err_enter_product_quantity">Please Enter Product Quantity</string>
 
 </resources>

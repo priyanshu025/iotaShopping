@@ -16,43 +16,34 @@ import com.example.iotashopping.R;
 import java.util.ArrayList;
 
 import model.Products;
-import ui.activities.Products.ProductsFragment;
 
-public class MyProductListAdapter extends RecyclerView.Adapter<MyProductListAdapter.MyViewHolder> {
+public class DashboardItemListAdapter extends RecyclerView.Adapter<DashboardItemListAdapter.MyViewHolder> {
     Context context;
     ArrayList<Products> productsArrayList;
-    ProductsFragment productsFragment;
 
-    public MyProductListAdapter(Context context, ArrayList<Products> productsArrayList,ProductsFragment fragment) {
+    public DashboardItemListAdapter(Context context, ArrayList<Products> productsArrayList) {
         this.context = context;
         this.productsArrayList = productsArrayList;
-        this.productsFragment=fragment;
     }
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public DashboardItemListAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater=LayoutInflater.from(parent.getContext());
-        View view=layoutInflater.inflate(R.layout.item_list_layout,parent,false);
+        View view=layoutInflater.inflate(R.layout.item_dashboard_layout,parent,false);
 
         return new MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DashboardItemListAdapter.MyViewHolder holder, int position) {
         Products products=productsArrayList.get(position);
         GlideLoader glideLoader=new GlideLoader(context);
-        if(holder instanceof MyViewHolder){
+        if(holder instanceof DashboardItemListAdapter.MyViewHolder){
             Uri image_uri=Uri.parse(products.getImage());
             glideLoader.load_product_picture(holder.getItem_imageView(),image_uri);
             holder.getTitle_textView().setText(products.getProductTitle());
             holder.getPrice_textView().setText("Price: " + String.valueOf(products.getProductPrice()));
-            holder.getDelete_view().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                       productsFragment.deleteProduct(products.getProduct_id());
-                }
-            });
         }
     }
 
@@ -66,13 +57,11 @@ public class MyProductListAdapter extends RecyclerView.Adapter<MyProductListAdap
         ImageView item_imageView;
         TextView title_textView;
         TextView price_textView;
-        ImageView delete_view;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            item_imageView=itemView.findViewById(R.id.iv_item_image);
-            title_textView=itemView.findViewById(R.id.tv_item_name);
-            price_textView=itemView.findViewById(R.id.tv_item_price);
-            delete_view=itemView.findViewById(R.id.ib_delete_product);
+            item_imageView=itemView.findViewById(R.id.iv_dashboard_item_image);
+            title_textView=itemView.findViewById(R.id.tv_dashboard_item_title);
+            price_textView=itemView.findViewById(R.id.tv_dashboard_item_price);
         }
 
         public ImageView getItem_imageView() {
@@ -85,10 +74,6 @@ public class MyProductListAdapter extends RecyclerView.Adapter<MyProductListAdap
 
         public TextView getPrice_textView() {
             return price_textView;
-        }
-
-        public ImageView getDelete_view() {
-            return delete_view;
         }
     }
 

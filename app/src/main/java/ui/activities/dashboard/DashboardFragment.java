@@ -12,18 +12,27 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.iotashopping.R;
 import com.example.iotashopping.databinding.FragmentDashboardBinding;
 
-import ui.activities.SettingsActivity;
+import java.util.ArrayList;
 
-public class DashboardFragment extends Fragment {
+import FireStore.FireStoreClass;
+import model.Products;
+import ui.activities.SettingsActivity;
+import util.BaseFragment;
+import util.DashboardItemListAdapter;
+
+public class DashboardFragment extends BaseFragment {
 
     //private DashboardViewModel dashboardViewModel;
-private FragmentDashboardBinding binding;
-
+     private FragmentDashboardBinding binding;
+     View root;
+     RecyclerView recyclerView;
+    TextView textView;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,18 +63,51 @@ private FragmentDashboardBinding binding;
         /*dashboardViewModel =
                 new ViewModelProvider(this).get(DashboardViewModel.class);*/
 
-    binding = FragmentDashboardBinding.inflate(inflater, container, false);
-    View root = binding.getRoot();
+    /*binding = FragmentDashboardBinding.inflate(inflater, container, false);
+    View root = binding.getRoot();*/
 
-        final TextView textView = binding.textDashboard;
+        /*final TextView textView = binding.textDashboard;*/
         /*dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
             }
         });*/
-        textView.setText("This is Dashboard Fragment");
+        /*textView.setText("This is Dashboard Fragment");*/
+        root=inflater.inflate(R.layout.fragment_dashboard,container,false);
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getDashboardListFromFirestore();
+    }
+
+    public void getDashboardListFromFirestore(){
+        showProgressDialog("Please wait...");
+        FireStoreClass fireStoreClass=new FireStoreClass();
+        fireStoreClass.getDashboardList(this);
+    }
+    public void SuccessProductListFromFirestore(ArrayList<Products> productsArrayList){
+        hideProgressDialog();
+      /*  FireStoreClass fireStoreClass=new FireStoreClass();
+        for(Products i:productsArrayList) {
+            fireStoreClass.UpdateProductDetails(requireActivity(), i);
+        }*/
+        recyclerView=root.findViewById(R.id.rv_dashboard_items);
+        textView=root.findViewById(R.id.tv_no_dashboard_items_found);
+        if(productsArrayList.size()>0){
+            recyclerView.setVisibility(View.VISIBLE);
+            textView.setVisibility(View.INVISIBLE);
+            recyclerView.setLayoutManager(new GridLayoutManager(requireActivity(),2));
+            recyclerView.setHasFixedSize(true);
+            DashboardItemListAdapter dashboardItemListAdapter=new DashboardItemListAdapter(requireActivity(),productsArrayList);
+            recyclerView.setAdapter(dashboardItemListAdapter);
+        }else{
+            recyclerView.setVisibility(View.INVISIBLE);
+            textView.setVisibility(View.VISIBLE);
+        }
     }
 
 @Override

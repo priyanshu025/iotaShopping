@@ -34,6 +34,7 @@ import ui.activities.Products.ProductsFragment;
 import ui.activities.RegistrationActivity;
 import ui.activities.SettingsActivity;
 import ui.activities.UserProfileActivity;
+import ui.activities.dashboard.DashboardFragment;
 
 public class FireStoreClass {
     private FirebaseFirestore mFireStore=FirebaseFirestore.getInstance();
@@ -200,23 +201,88 @@ public class FireStoreClass {
                             Log.i("product_id",products.getProduct_id()+ "  " +products.getProductTitle());
                             productList.add(products);
                         }
-                       /* Iterator var4 = queryDocumentSnapshots.getDocuments().iterator();
-
-                        while(var4.hasNext()) {
-                            DocumentSnapshot i = (DocumentSnapshot)var4.next();
-                            Products product = (Products) i.toObject(Products.class);
-                           *//* Intrinsics.checkNotNull(product);
-                            Intrinsics.checkNotNullExpressionValue(i, "i");*//*
-                            String var10001 = i.getId();
-                           *//* Intrinsics.checkNotNullExpressionValue(var10001, "i.id");*//*
-                            product.setId(var10001);
-                            productList.add(product);
-                        }*/
                         if(fragment instanceof ProductsFragment)
                             ((ProductsFragment)fragment).SuccessProductListFromFirestore(productList);
                     }
-                });
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if(fragment instanceof ProductsFragment){
+                    ((ProductsFragment)fragment).hideProgressDialog();
+                    e.printStackTrace();
+                }
+            }
+        });
 
     }
+
+    public void getDashboardList( Fragment fragment){
+        mFireStore.collection("Products")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        //Log.i("Product List",queryDocumentSnapshots.getDocuments().toString());
+                        ArrayList<Products> productList=new ArrayList<>();
+                        for(DocumentSnapshot i:queryDocumentSnapshots){
+                            Products products=i.toObject(Products.class);
+                            Log.i("product_id",products.getProduct_id()+ "  " +products.getProductTitle());
+                            String product_id=i.getId();
+                            products.setProduct_id(product_id);
+                            Log.i("product_id",products.getProduct_id()+ "  " +products.getProductTitle());
+                            productList.add(products);
+                        }
+
+                        if(fragment instanceof DashboardFragment)
+                            ((DashboardFragment)fragment).SuccessProductListFromFirestore(productList);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if(fragment instanceof DashboardFragment)
+                    ((DashboardFragment)fragment).hideProgressDialog();
+                e.printStackTrace();
+            }
+        });
+
+    }
+    public void updateProductDetails(Fragment fragment, HashMap userHashMap,String id) {
+        // Collection Name
+        mFireStore.collection("Products")
+                // Document ID against which the data to be updated. Here the document id is the current logged in user id.
+                .document(id)
+                // A HashMap of fields which are to be updated.
+                .update(userHashMap).addOnSuccessListener(new OnSuccessListener() {
+            @Override
+            public void onSuccess(Object o) {
+                if (fragment instanceof ProductsFragment) {
+                    ((ProductsFragment)fragment).ProductUpdateSuccess();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (fragment instanceof ProductsFragment) {
+                    ((ProductsFragment)fragment).hideProgressDialog();
+                }
+                e.printStackTrace();
+            }
+        });
+
+    }
+    public void deleteProductfromfirestore(ProductsFragment fragment,String product_id ){
+        mFireStore.collection("Products").document(product_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                ((ProductsFragment)fragment).productDeleteSuccess();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
 
 }

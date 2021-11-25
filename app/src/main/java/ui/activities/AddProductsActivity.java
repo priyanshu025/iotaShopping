@@ -4,11 +4,14 @@ import static com.example.iotashopping.R.drawable.ic_vector_edit;
 import static ui.activities.UserProfileActivity.READ_STORAGE_PERMISSION_CODE;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +27,7 @@ import androidx.core.content.ContextCompat;
 import com.example.iotashopping.R;
 
 import FireStore.FireStoreClass;
+import model.Products;
 import util.BaseActivity;
 import util.GlideLoader;
 import util.ImageChooser;
@@ -40,6 +44,8 @@ public class AddProductsActivity extends BaseActivity implements View.OnClickLis
     EditText et_product_quantity;
     EditText et_product_description;
     Button add_product_btn;
+    FireStoreClass fireStoreClass;
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +58,8 @@ public class AddProductsActivity extends BaseActivity implements View.OnClickLis
         et_product_description=findViewById(R.id.product_description);
         et_product_quantity=findViewById(R.id.product_quantity);
         add_product_btn=findViewById(R.id.add_product_btn);
+        sharedPreferences=this.getSharedPreferences("Iota shopping", Context.MODE_PRIVATE);
+        fireStoreClass=new FireStoreClass();
         add_image.setOnClickListener(this::onClick);
         add_product_btn.setOnClickListener(this::onClick);
 
@@ -147,14 +155,36 @@ public class AddProductsActivity extends BaseActivity implements View.OnClickLis
     public void upload_product_image(){
         showProgressDialog("Please wait...");
         showErrorSnackBar("Your product details are valid", false);
-        FireStoreClass fireStoreClass=new FireStoreClass();
         fireStoreClass.uploadImage(product_image_uri,this,"product_image");
     }
     public void uploadImageSuccess(String url){
-        hideProgressDialog();
+        //hideProgressDialog();
         product_image_url=url;
         //Toast.makeText(UserProfileActivity.this, url, Toast.LENGTH_SHORT).show();
         //updateUserProfileDetails();
+        uploadProductDetails();
 
+    }
+    public void uploadProductDetails(){
+
+       String user_name=sharedPreferences.getString("user_name","");
+        Log.i("user_name",user_name);
+        Products products=new Products(fireStoreClass.getCurrentUserID(),
+                user_name,
+                " ",
+                product_image_url,
+                et_product_title.getText().toString(),
+                et_product_description.getText().toString(),
+                Integer.parseInt(et_product_quantity.getText().toString()),
+                Integer.parseInt(et_product_price.getText().toString())
+                );
+
+        fireStoreClass.UpdateProductDetails(AddProductsActivity.this,products);
+
+    }
+    public void uploadProductSuccess(){
+        hideProgressDialog();
+        Toast.makeText(AddProductsActivity.this, "Your Product Upload Successful", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }

@@ -1,6 +1,8 @@
 package ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -24,6 +26,7 @@ import util.BaseActivity;
 public class RegistrationActivity extends BaseActivity {
     EditText name,email,password;
     private FirebaseAuth auth;
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +37,7 @@ public class RegistrationActivity extends BaseActivity {
         password=findViewById(R.id.Password);
         auth=FirebaseAuth.getInstance();
         Button signup=findViewById(R.id.signUp);
+        sharedPreferences=this.getSharedPreferences("Iota shopping", Context.MODE_PRIVATE);
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,7 +54,7 @@ public class RegistrationActivity extends BaseActivity {
         String user_name=name.getText().toString();
         String user_email=email.getText().toString();
         String user_password=password.getText().toString();
-
+        sharedPreferences.edit().putString("user_name",user_name).apply();
         if(TextUtils.isEmpty(user_email)){
             //Toast.makeText(RegistrationActivity.this, "Enter Email", Toast.LENGTH_SHORT).show();
             showErrorSnackBar("Enter Email",true);

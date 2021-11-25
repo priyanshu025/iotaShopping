@@ -7,6 +7,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -14,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -21,14 +23,17 @@ import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import model.Products;
+import model.User;
 import ui.activities.AddProductsActivity;
 import ui.activities.LoginActivity;
+import ui.activities.Products.ProductsFragment;
 import ui.activities.RegistrationActivity;
 import ui.activities.SettingsActivity;
 import ui.activities.UserProfileActivity;
-import model.User;
 
 public class FireStoreClass {
     private FirebaseFirestore mFireStore=FirebaseFirestore.getInstance();
@@ -158,4 +163,60 @@ public class FireStoreClass {
         });
 
     }
+    public final void UpdateProductDetails(@NotNull final Activity activity, Products productsInfo) {
+
+        this.mFireStore.collection("Products").document().set(productsInfo, SetOptions.merge()).addOnSuccessListener(
+                new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        if(activity instanceof AddProductsActivity)
+                           ((AddProductsActivity)activity).uploadProductSuccess();
+                    }
+                }
+        ).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (activity instanceof AddProductsActivity)
+                     ((AddProductsActivity)activity).hideProgressDialog();
+                e.printStackTrace();
+            }
+        });
+
+    }
+    public void getProductsList(final Fragment fragment){
+        mFireStore.collection("Products")
+                .whereEqualTo("user_id",this.getCurrentUserID())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        //Log.i("Product List",queryDocumentSnapshots.getDocuments().toString());
+                        ArrayList<Products> productList=new ArrayList<>();
+                        for(DocumentSnapshot i:queryDocumentSnapshots){
+                            Products products=i.toObject(Products.class);
+                            Log.i("product_id",products.getProduct_id()+ "  " +products.getProductTitle());
+                             String product_id=i.getId();
+                            products.setProduct_id(product_id);
+                            Log.i("product_id",products.getProduct_id()+ "  " +products.getProductTitle());
+                            productList.add(products);
+                        }
+                       /* Iterator var4 = queryDocumentSnapshots.getDocuments().iterator();
+
+                        while(var4.hasNext()) {
+                            DocumentSnapshot i = (DocumentSnapshot)var4.next();
+                            Products product = (Products) i.toObject(Products.class);
+                           *//* Intrinsics.checkNotNull(product);
+                            Intrinsics.checkNotNullExpressionValue(i, "i");*//*
+                            String var10001 = i.getId();
+                           *//* Intrinsics.checkNotNullExpressionValue(var10001, "i.id");*//*
+                            product.setId(var10001);
+                            productList.add(product);
+                        }*/
+                        if(fragment instanceof ProductsFragment)
+                            ((ProductsFragment)fragment).SuccessProductListFromFirestore(productList);
+                    }
+                });
+
+    }
+
 }

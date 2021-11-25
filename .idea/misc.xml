@@ -20,6 +20,7 @@
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/drawable/ic_vector_products.xml" value="0.17407407407407408" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/drawable/ic_vector_settings_24.xml" value="0.14635416666666667" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/drawable/item_grey_border_background.xml" value="0.16944444444444445" />
+        <entry key="..\:/android app development/iotaShopping/app/src/main/res/drawable/rv_item_image_background.xml" value="0.21574074074074073" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/drawable/textbg.xml" value="0.2703125" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/drawable/user_image_background.xml" value="0.20833333333333334" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/activity_add_products.xml" value="0.1408514492753623" />
@@ -32,6 +33,8 @@
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/activity_splash_screen.xml" value="0.14583333333333334" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/activity_user_profile.xml" value="0.1" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/fragment_dashboard.xml" value="0.15534420289855072" />
+        <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/fragment_products.xml" value="0.23324275362318841" />
+        <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/item_list_layout.xml" value="0.223731884057971" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/progess_dialogue.xml" value="0.23854166666666668" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/menu/addproducts_menu.xml" value="0.25416666666666665" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/menu/bottom_nav_menu.xml" value="0.25416666666666665" />

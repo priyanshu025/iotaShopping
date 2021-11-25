@@ -19,4 +19,11 @@ public class GlideLoader {
             e.printStackTrace();
         }
     }
+    public void load_product_picture(ImageView imageView, Uri imageuri){
+        try {
+            Glide.with(context).load(imageuri).centerCrop().into(imageView);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

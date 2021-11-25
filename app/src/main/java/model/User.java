@@ -12,10 +12,6 @@ public class User implements Parcelable {
     private long mobile;
     private String gender;
     private int profileCompleted;
-    private String productTitle;
-    private String productDescription;
-    private int productQuantity;
-    private int ProductPrice;
 
     public User( String id,  String firstName,  String email,  String image, long mobile,  String gender, int profileCompleted) {
         this.id = id;
@@ -25,6 +21,7 @@ public class User implements Parcelable {
         this.mobile = mobile;
         this.gender = gender;
         this.profileCompleted = profileCompleted;
+
     }
     public User(){
 
@@ -57,6 +54,7 @@ public class User implements Parcelable {
         return this.profileCompleted;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -71,6 +69,7 @@ public class User implements Parcelable {
          dest.writeLong(mobile);
          dest.writeString(gender);
          dest.writeInt(profileCompleted);
+
     }
     public static final Parcelable.Creator<User> CREATOR
             = new Parcelable.Creator<User>() {

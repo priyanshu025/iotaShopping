@@ -30,6 +30,7 @@ import model.Products;
 import model.User;
 import ui.activities.AddProductsActivity;
 import ui.activities.LoginActivity;
+import ui.activities.ProductDetailsActivity;
 import ui.activities.Products.ProductsFragment;
 import ui.activities.RegistrationActivity;
 import ui.activities.SettingsActivity;
@@ -226,10 +227,10 @@ public class FireStoreClass {
                         ArrayList<Products> productList=new ArrayList<>();
                         for(DocumentSnapshot i:queryDocumentSnapshots){
                             Products products=i.toObject(Products.class);
-                            Log.i("product_id",products.getProduct_id()+ "  " +products.getProductTitle());
+                            //Log.i("product_id",products.getProduct_id()+ "  " +products.getProductTitle());
                             String product_id=i.getId();
                             products.setProduct_id(product_id);
-                            Log.i("product_id",products.getProduct_id()+ "  " +products.getProductTitle());
+                            //Log.i("product_id",products.getProduct_id()+ "  " +products.getProductTitle());
                             productList.add(products);
                         }
 
@@ -280,6 +281,21 @@ public class FireStoreClass {
             @Override
             public void onFailure(@NonNull Exception e) {
 
+            }
+        });
+    }
+    public void getProductDetailsFromFirestore(ProductDetailsActivity activity, String product_id){
+        mFireStore.collection("Products").document(product_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Products products=documentSnapshot.toObject(Products.class);
+                activity.getProductDetailsSuccess(products);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+              activity.hideProgressDialog();
+              e.printStackTrace();
             }
         });
     }

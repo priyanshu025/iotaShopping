@@ -13,9 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IotaShopping">
         <activity
-            android:name="ui.activities.AddProductsActivity"
+            android:name="ui.activities.ProductDetailsActivity"
             android:exported="true"
             android:theme="@style/noactionbar"/>
+        <activity
+            android:name="ui.activities.AddProductsActivity"
+            android:exported="true"
+            android:theme="@style/noactionbar" />
         <activity
             android:name="ui.activities.SettingsActivity"
             android:exported="true"

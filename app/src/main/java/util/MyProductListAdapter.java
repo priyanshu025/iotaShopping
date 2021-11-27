@@ -1,6 +1,7 @@
 package util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.example.iotashopping.R;
 import java.util.ArrayList;
 
 import model.Products;
+import ui.activities.ProductDetailsActivity;
 import ui.activities.Products.ProductsFragment;
 
 public class MyProductListAdapter extends RecyclerView.Adapter<MyProductListAdapter.MyViewHolder> {
@@ -51,6 +53,14 @@ public class MyProductListAdapter extends RecyclerView.Adapter<MyProductListAdap
                 @Override
                 public void onClick(View v) {
                        productsFragment.deleteProduct(products.getProduct_id());
+                }
+            });
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, ProductDetailsActivity.class);
+                    intent.putExtra("product_id",products.getProduct_id());
+                    context.startActivity(intent);
                 }
             });
         }

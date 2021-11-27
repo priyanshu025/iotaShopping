@@ -1,6 +1,7 @@
 package util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.example.iotashopping.R;
 import java.util.ArrayList;
 
 import model.Products;
+import ui.activities.ProductDetailsActivity;
 
 public class DashboardItemListAdapter extends RecyclerView.Adapter<DashboardItemListAdapter.MyViewHolder> {
     Context context;
@@ -44,6 +46,14 @@ public class DashboardItemListAdapter extends RecyclerView.Adapter<DashboardItem
             glideLoader.load_product_picture(holder.getItem_imageView(),image_uri);
             holder.getTitle_textView().setText(products.getProductTitle());
             holder.getPrice_textView().setText("Price: " + String.valueOf(products.getProductPrice()));
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, ProductDetailsActivity.class);
+                    intent.putExtra("product_id",products.getProduct_id());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 

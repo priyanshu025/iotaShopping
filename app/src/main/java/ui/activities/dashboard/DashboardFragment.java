@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import FireStore.FireStoreClass;
 import model.Products;
+import ui.activities.CartListActivity;
 import ui.activities.SettingsActivity;
 import util.BaseFragment;
 import util.DashboardItemListAdapter;
@@ -51,6 +52,11 @@ public class DashboardFragment extends BaseFragment {
         switch(item.getItemId()){
             case R.id.settings:{
                 Intent intent=new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            case R.id.cart:{
+                Intent intent=new Intent(getActivity(), CartListActivity.class);
                 startActivity(intent);
                 return true;
             }

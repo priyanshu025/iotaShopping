@@ -26,9 +26,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import model.CartItem;
 import model.Products;
 import model.User;
 import ui.activities.AddProductsActivity;
+import ui.activities.CartListActivity;
 import ui.activities.LoginActivity;
 import ui.activities.ProductDetailsActivity;
 import ui.activities.Products.ProductsFragment;
@@ -247,7 +249,7 @@ public class FireStoreClass {
         });
 
     }
-    public void updateProductDetails(Fragment fragment, HashMap userHashMap,String id) {
+    public void completeProductDetails(Fragment fragment, HashMap userHashMap,String id) {
         // Collection Name
         mFireStore.collection("Products")
                 // Document ID against which the data to be updated. Here the document id is the current logged in user id.
@@ -299,6 +301,72 @@ public class FireStoreClass {
             }
         });
     }
-
+    public void add_to_cart_Firestore(ProductDetailsActivity activity, CartItem cartItem){
+        mFireStore.collection("Cart Item").document().set(cartItem,SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        activity.add_to_cartSuccess();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                activity.hideProgressDialog();
+                e.printStackTrace();
+            }
+        });
+    }
+    public void checkItemExistInCart(ProductDetailsActivity activity,String product_id){
+        mFireStore.collection("Cart Item")
+                .whereEqualTo("user_id",getCurrentUserID())
+                .whereEqualTo("product_id",product_id)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if(queryDocumentSnapshots.size()>0) {
+                            activity.itemExistInCart();
+                        }else{
+                            activity.hideProgressDialog();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                activity.hideProgressDialog();
+                e.printStackTrace();
+            }
+        });
+    }
+    public void getCartList(Activity activity){
+        mFireStore.collection("Cart Item")
+                .whereEqualTo("user_id",getCurrentUserID())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        ArrayList<CartItem> arrayList=new ArrayList<>();
+/*
+                        Toast.makeText(activity, queryDocumentSnapshots.getDocuments().toString(), Toast.LENGTH_SHORT).show();
+*/                       Log.i("Document",queryDocumentSnapshots.getDocuments().toString());
+                        for(DocumentSnapshot i:queryDocumentSnapshots.getDocuments()){
+                            CartItem cartItem=i.toObject(CartItem.class);
+                            cartItem.setId(i.getId());
+                            Log.i("cart item id",cartItem.getId());
+                            arrayList.add(cartItem);
+                        }
+                        if(activity instanceof CartListActivity){
+                            ((CartListActivity) activity).cartListSuccess(arrayList);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if(activity instanceof CartListActivity)
+                    ((CartListActivity) activity).hideProgressDialog();
+                e.printStackTrace();
+            }
+        });
+    }
 
 }

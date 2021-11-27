@@ -51,6 +51,7 @@ public class DashboardItemListAdapter extends RecyclerView.Adapter<DashboardItem
                 public void onClick(View v) {
                     Intent intent=new Intent(context, ProductDetailsActivity.class);
                     intent.putExtra("product_id",products.getProduct_id());
+                    intent.putExtra("product_owner_id",products.getUser_id());
                     context.startActivity(intent);
                 }
             });

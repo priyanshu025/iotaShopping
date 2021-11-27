@@ -72,7 +72,7 @@ public class ProductsFragment extends BaseFragment {
             hashMap.put("productQuantity",i.getProductQuantity());
             hashMap.put("ProductPrice",i.getProductPrice());
             String product_id= (String) hashMap.get("product_id");
-            fireStoreClass.updateProductDetails(this,hashMap,product_id);
+            fireStoreClass.completeProductDetails(this,hashMap,product_id);
         }
 
         //Toast.makeText(requireActivity(), product_id, Toast.LENGTH_SHORT).show();

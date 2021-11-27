@@ -24,6 +24,7 @@
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/drawable/textbg.xml" value="0.2703125" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/drawable/user_image_background.xml" value="0.20833333333333334" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/activity_add_products.xml" value="0.1408514492753623" />
+        <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/activity_cart_list.xml" value="0.213768115942029" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/activity_dash_board.xml" value="0.1621376811594203" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/activity_dashboard.xml" value="0.1621376811594203" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/activity_login.xml" value="0.17300724637681159" />
@@ -35,6 +36,7 @@
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/activity_user_profile.xml" value="0.1" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/fragment_dashboard.xml" value="0.15534420289855072" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/fragment_products.xml" value="0.23324275362318841" />
+        <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/item_cart_layout.xml" value="0.213768115942029" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/item_dashboard_layout.xml" value="0.223731884057971" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/item_list_layout.xml" value="0.223731884057971" />
         <entry key="..\:/android app development/iotaShopping/app/src/main/res/layout/progess_dialogue.xml" value="0.23854166666666668" />

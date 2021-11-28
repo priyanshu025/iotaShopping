@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.iotashopping.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import FireStore.FireStoreClass;
 import model.CartItem;
+import model.Products;
 import util.BaseActivity;
 import util.CartItemListAdapter;
 
@@ -28,6 +28,8 @@ public class CartListActivity extends BaseActivity {
     TextView shipping_charge;
     TextView Total_amount;
     LinearLayout ll;
+    ArrayList<Products> mArrayList=new ArrayList<>();
+    ArrayList<CartItem> mCartList=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,18 +46,19 @@ public class CartListActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getCartItem();
+        //getCartItem();
+        getProductList();
     }
 
     public void getCartItem(){
-        showProgressDialog("Please wait....");
+       // showProgressDialog("Please wait....");
         FireStoreClass fireStoreClass=new FireStoreClass();
         fireStoreClass.getCartList(this);
     }
     public void cartListSuccess(ArrayList<CartItem> Item){
         FireStoreClass fireStoreClass=new FireStoreClass();
         hideProgressDialog();
-        HashMap hashMap=new HashMap();
+       /* HashMap hashMap=new HashMap();
         for(CartItem i: Item){
             hashMap.put("user_id",i.getUser_id());
             hashMap.put("product_id",i.getProduct_id());
@@ -66,8 +69,22 @@ public class CartListActivity extends BaseActivity {
             hashMap.put("stock_quantity",i.getStock_quantity());
             hashMap.put("id",i.getId());
             fireStoreClass.update_cart_list(this,i.getId(),hashMap);
+        }*/
+        for (Products i:mArrayList) {
+            for (CartItem j:Item) {
+                if (i.getProduct_id()== j.getProduct_id()) {
+
+                    j.setStock_quantity(i.getProductQuantity());
+
+                    if (i.getProductQuantity() == 0){
+                        //cart.cart_quantity = product.stock_quantity
+                                j.setCart_quantity(i.getProductQuantity());
+                    }
+                }
+            }
         }
-        if(Item.size()>0){
+        mCartList=Item;
+        if(mCartList.size()>0){
             recyclerView.setVisibility(View.VISIBLE);
             ll.setVisibility(View.VISIBLE);
             noItem.setVisibility(View.INVISIBLE);
@@ -76,10 +93,13 @@ public class CartListActivity extends BaseActivity {
             CartItemListAdapter cartItemListAdapter=new CartItemListAdapter(this,Item);
             recyclerView.setAdapter(cartItemListAdapter);
             Double subTotal=0.0;
-            for(CartItem i:Item){
-                Double price=Double.valueOf(i.getPrice());
-                Integer quantity=i.getCart_quantity();
-                subTotal+=(price*quantity);
+            for(CartItem i:mCartList){
+                int available_quantity=i.getStock_quantity();
+                if(available_quantity>0) {
+                    Double price = Double.valueOf(i.getPrice());
+                    Integer quantity = i.getCart_quantity();
+                    subTotal += (price * quantity);
+                }
             }
             sub_total.setText("₹"+String.valueOf(subTotal));
             shipping_charge.setText("₹10");
@@ -116,5 +136,29 @@ public class CartListActivity extends BaseActivity {
     public void upate_cart_list_success(){
         hideProgressDialog();
         Toast.makeText(this, "Cart List Item Updated", Toast.LENGTH_SHORT).show();
+        getCartItem();
+    }
+    public void getAllProductsSuccess(ArrayList<Products> arrayList){
+        //hideProgressDialog();
+        mArrayList=arrayList;
+        getCartItem();
+    }
+    private void  getProductList() {
+
+        // Show the progress dialog.
+        showProgressDialog("Please wait...");
+        FireStoreClass fireStoreClass=new FireStoreClass();
+        fireStoreClass.getAllProductList(this);
+    }
+    public void itemRemovedSuccess() {
+
+        hideProgressDialog();
+
+        Toast.makeText(
+                this,
+       "Item removed Successfully",
+                Toast.LENGTH_SHORT
+        ).show();
+        getCartItem();
     }
 }

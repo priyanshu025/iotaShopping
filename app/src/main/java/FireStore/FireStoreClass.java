@@ -2,6 +2,7 @@ package FireStore;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -316,7 +317,7 @@ public class FireStoreClass {
             }
         });
     }
-    public void update_cart_list(Activity activity,String cart_id,HashMap hashMap){
+    public void update_cart_list(Context activity,String cart_id,HashMap hashMap){
         mFireStore.collection("Cart Item")
                 .document(cart_id)
                 .update(hashMap)
@@ -388,5 +389,74 @@ public class FireStoreClass {
             }
         });
     }
+    public void getAllProductList(CartListActivity activity){
+        mFireStore.collection("Products")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                      ArrayList<Products> arrayList=new ArrayList<>();
+                      for(DocumentSnapshot i:queryDocumentSnapshots.getDocuments()){
+                         Products products=i.toObject(Products.class);
+                         products.setProduct_id(i.getId());
+                         arrayList.add(products);
+                      }
+                      activity.getAllProductsSuccess(arrayList);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                activity.hideProgressDialog();
+                e.printStackTrace();
+            }
+        });
+    }
+    public void removeItemFromCart(Context activity, String cart_id) {
+
+        // Cart items collection name
+        mFireStore.collection("Cart Item")
+                .document(cart_id) // cart id
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        if(activity instanceof CartListActivity){
+                                  ((CartListActivity) activity).itemRemovedSuccess();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if(activity instanceof CartListActivity)
+                     ((CartListActivity) activity).hideProgressDialog();
+                e.printStackTrace();
+            }
+        });
+                /*.addOnSuccessListener {
+
+            // TODO Step 6: Notify the success result of the removed cart item from the list to the base class.
+            // START
+            // Notify the success result of the removed cart item from the list to the base class.
+            when (context) {
+                is CartListActivity -> {
+                    context.itemRemovedSuccess()
+                }
+            }
+            // END
+        }*/
+            /*.addOnFailureListener { e ->
+
+                // Hide the progress dialog if there is any error.
+                when (context) {
+            is CartListActivity -> {
+                context.hideProgressDialog()
+            }
+        }
+            Log.e(
+                    context.javaClass.simpleName,
+                    "Error while removing the item from the cart list.",
+                    e
+            )*/
+        }
 
 }

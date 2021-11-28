@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.core.content.ContextCompat;
 
 import com.example.iotashopping.R;
 
@@ -80,10 +81,30 @@ public class ProductDetailsActivity extends BaseActivity implements View.OnClick
         product_price.setText(String.valueOf(products.getProductPrice()));
         product_description.setText(products.getProductDescription());
         product_quantity.setText(String.valueOf(products.getProductQuantity()));
-        if(fireStoreClass.getCurrentUserID().equals(mProducts.getUser_id())){
+        if(products.getProductQuantity()==0){
             hideProgressDialog();
+
+            // Hide the AddToCart button if the item is already in the cart.
+            add_to_cart_button.setVisibility(View.GONE);
+            product_quantity.setText("Out of Stock");
+            product_quantity.setTextColor(ContextCompat.getColor(this,R.color.colorSnackBarError));
+           /* btn_add_to_cart.visibility = View.GONE
+
+            tv_product_details_stock_quantity.text =
+                    resources.getString(R.string.lbl_out_of_stock)
+
+            tv_product_details_stock_quantity.setTextColor(
+                    ContextCompat.getColor(
+                            this@ProductDetailsActivity,
+            R.color.colorSnackBarError
+                )
+            )*/
         }else {
-            fireStoreClass.checkItemExistInCart(this, product_id);
+            if (fireStoreClass.getCurrentUserID().equals(mProducts.getUser_id())) {
+                hideProgressDialog();
+            } else {
+                fireStoreClass.checkItemExistInCart(this, product_id);
+            }
         }
     }
     private void setupActionbar() {

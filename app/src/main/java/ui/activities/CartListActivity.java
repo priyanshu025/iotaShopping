@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.iotashopping.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import FireStore.FireStoreClass;
 import model.CartItem;
@@ -51,8 +53,20 @@ public class CartListActivity extends BaseActivity {
         fireStoreClass.getCartList(this);
     }
     public void cartListSuccess(ArrayList<CartItem> Item){
+        FireStoreClass fireStoreClass=new FireStoreClass();
         hideProgressDialog();
-
+        HashMap hashMap=new HashMap();
+        for(CartItem i: Item){
+            hashMap.put("user_id",i.getUser_id());
+            hashMap.put("product_id",i.getProduct_id());
+            hashMap.put("title",i.getTitle());
+            hashMap.put("price",i.getPrice());
+            hashMap.put("image",i.getImage());
+            hashMap.put("cart_quantity",i.getCart_quantity());
+            hashMap.put("stock_quantity",i.getStock_quantity());
+            hashMap.put("id",i.getId());
+            fireStoreClass.update_cart_list(this,i.getId(),hashMap);
+        }
         if(Item.size()>0){
             recyclerView.setVisibility(View.VISIBLE);
             ll.setVisibility(View.VISIBLE);
@@ -98,5 +112,9 @@ public class CartListActivity extends BaseActivity {
             }
         });
 
+    }
+    public void upate_cart_list_success(){
+        hideProgressDialog();
+        Toast.makeText(this, "Cart List Item Updated", Toast.LENGTH_SHORT).show();
     }
 }

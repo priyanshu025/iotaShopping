@@ -316,6 +316,26 @@ public class FireStoreClass {
             }
         });
     }
+    public void update_cart_list(Activity activity,String cart_id,HashMap hashMap){
+        mFireStore.collection("Cart Item")
+                .document(cart_id)
+                .update(hashMap)
+                .addOnSuccessListener(new OnSuccessListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        if(activity instanceof CartListActivity){
+                            ((CartListActivity) activity).upate_cart_list_success();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if(activity instanceof CartListActivity)
+                    ((CartListActivity) activity).hideProgressDialog();
+                e.printStackTrace();
+            }
+        });
+    }
     public void checkItemExistInCart(ProductDetailsActivity activity,String product_id){
         mFireStore.collection("Cart Item")
                 .whereEqualTo("user_id",getCurrentUserID())
